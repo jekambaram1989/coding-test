@@ -1,0 +1,36 @@
+package com.codingtest.ul.network
+
+import android.content.Context
+import com.codingtest.ul.BuildConfig
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
+
+class RemoteDataSource @Inject constructor() {
+
+    @Inject
+    lateinit var networkConnectionInterceptor: NetworkConnectionInterceptor
+
+    fun <MyApi> buildApi(api: Class<MyApi>, context: Context): MyApi {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.BASE_URL)
+            .client(getClient(networkConnectionInterceptor))
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(api)
+    }
+
+    private fun getClient(networkConnectionInterceptor: NetworkConnectionInterceptor): OkHttpClient {
+        return OkHttpClient
+            .Builder()
+            .addInterceptor { chain ->
+                chain.proceed(chain.request().newBuilder().also {
+                    it.header("Accept", "application/json")
+                }.build())
+            }
+            .addInterceptor(networkConnectionInterceptor)
+            .build()
+    }
+
+}
