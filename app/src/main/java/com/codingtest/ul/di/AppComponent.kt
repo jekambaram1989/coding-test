@@ -2,7 +2,6 @@ package com.codingtest.ul.di
 
 import com.codingtest.ul.MainApplication
 import com.codingtest.ul.db.UniversityDao
-import com.codingtest.ul.network.NetworkConnectionInterceptor
 import dagger.Component
 import dagger.android.AndroidInjectionModule
 import javax.inject.Singleton
@@ -17,6 +16,6 @@ import javax.inject.Singleton
 )
 interface AppComponent {
     fun inject(application: MainApplication)
-    val networkConnectionInterceptor: NetworkConnectionInterceptor
+
     val universityDao: UniversityDao
 }

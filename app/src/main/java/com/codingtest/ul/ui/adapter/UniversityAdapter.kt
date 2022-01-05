@@ -1,11 +1,9 @@
 package com.codingtest.ul.ui.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.codingtest.ul.R
+import com.codingtest.ul.databinding.FragmentItemBinding
 import com.codingtest.ul.network.response.University
 
 class UniversityAdapter :
@@ -19,7 +17,9 @@ class UniversityAdapter :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item, parent, false))
+        return ViewHolder(FragmentItemBinding.inflate(LayoutInflater.from(parent.context),
+            parent,
+            false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -30,13 +30,11 @@ class UniversityAdapter :
         return universityList.size
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
+    class ViewHolder(private val binding: FragmentItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bindView(university: University) {
-            val country = itemView.findViewById(R.id.item1) as TextView
-            val name = itemView.findViewById(R.id.item2) as TextView
-            country.text = "Country: ${university.country}"
-            name.text = "University: ${university.name}"
+            binding.txtCountryName.text = "Country: ${university.country}"
+            binding.txtUniversityName.text = "University: ${university.name}"
         }
     }
 }

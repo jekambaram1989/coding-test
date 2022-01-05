@@ -3,10 +3,11 @@ package com.codingtest.ul.repository
 
 import com.codingtest.ul.db.DatabaseHelper
 import com.codingtest.ul.db.UniversityDao
-import com.codingtest.ul.network.SafeApiRequest
 import com.codingtest.ul.network.BaseApi
+import com.codingtest.ul.network.SafeApiRequest
 import com.codingtest.ul.network.response.University
-import com.codingtest.ul.util.NetworkState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UniversityRepository @Inject constructor(
@@ -16,21 +17,27 @@ class UniversityRepository @Inject constructor(
     @Inject
     lateinit var universityDao: UniversityDao
 
-    suspend fun getUniversityListNetwork(): NetworkState {
+    suspend fun getNetworkUniversities(): List<University> {
         return apiRequest {
             api.getUniversityList("search?country=United+Kingdom")
         }
     }
 
     override suspend fun insertUniversities(universityList: List<University>) {
-        universityDao.insertUniversities(universityList)
+        withContext(Dispatchers.IO) {
+            universityDao.insertUniversities(universityList)
+        }
     }
 
-    override suspend fun getUniversities() =
-        universityDao.getUniversities()
+    override suspend fun getLocalUniversities(): List<University> {
+        return withContext(Dispatchers.IO) {
+            universityDao.getUniversities()
+        }
+    }
 
     override suspend fun deleteAll() {
-        universityDao.deleteAll()
+        return withContext(Dispatchers.IO) {
+            universityDao.deleteAll()
+        }
     }
-
 }

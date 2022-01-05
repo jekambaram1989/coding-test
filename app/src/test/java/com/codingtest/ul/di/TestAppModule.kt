@@ -1,6 +1,5 @@
 package com.codingtest.ul.di
 
-import android.content.Context
 import com.codingtest.ul.network.BaseApi
 import com.codingtest.ul.network.RemoteDataSource
 import com.codingtest.ul.repository.UniversityRepository
@@ -11,12 +10,12 @@ import org.mockito.Mockito
 import javax.inject.Singleton
 
 @Module
-class TestAppModule(private val context: Context) {
+class TestAppModule() {
 
     @Singleton
     @Provides
     fun provideBaseApi(remoteDataSource: RemoteDataSource): BaseApi {
-        return remoteDataSource.buildApi(BaseApi::class.java, context)
+        return remoteDataSource.buildApi(BaseApi::class.java)
     }
 
     @Singleton
@@ -27,7 +26,7 @@ class TestAppModule(private val context: Context) {
 
     @Singleton
     @Provides
-    fun provideUniversityViewModel(): UniversityViewModel {
-        return Mockito.mock(UniversityViewModel::class.java)
+    fun provideUniversityViewModel(repository: UniversityRepository): UniversityViewModel {
+        return UniversityViewModel(repository)
     }
 }

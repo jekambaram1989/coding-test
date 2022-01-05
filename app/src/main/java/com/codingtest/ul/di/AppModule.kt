@@ -14,7 +14,7 @@ class AppModule(private val context: Context) {
     @Singleton
     @Provides
     fun provideBaseApi(remoteDataSource: RemoteDataSource): BaseApi {
-        return remoteDataSource.buildApi(BaseApi::class.java, context)
+        return remoteDataSource.buildApi(BaseApi::class.java)
     }
 
     @Singleton
@@ -22,4 +22,5 @@ class AppModule(private val context: Context) {
     fun provideNetworkConnectionInterceptor(): NetworkConnectionInterceptor {
         return NetworkConnectionInterceptor(context)
     }
+
 }

@@ -1,6 +1,5 @@
 package com.codingtest.ul.network
 
-import android.content.Context
 import com.codingtest.ul.BuildConfig
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -12,7 +11,7 @@ class RemoteDataSource @Inject constructor() {
     @Inject
     lateinit var networkConnectionInterceptor: NetworkConnectionInterceptor
 
-    fun <MyApi> buildApi(api: Class<MyApi>, context: Context): MyApi {
+    fun <T> buildApi(api: Class<T>): T {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(getClient(networkConnectionInterceptor))

@@ -1,18 +1,18 @@
 package com.codingtest.ul.network
 
-import com.codingtest.ul.util.NetworkState
+import com.codingtest.ul.util.ApiException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 abstract class SafeApiRequest {
 
-    suspend fun <T : Any> apiRequest(call: suspend () -> Response<T>): NetworkState {
+    suspend fun <T : Any> apiRequest(call: suspend () -> Response<T>): T {
         return withContext(Dispatchers.IO) {
             val response = call.invoke()
             when (response.isSuccessful) {
-                true -> NetworkState.success(response.body()!!)
-                false -> NetworkState.error("Server not responding")
+                true -> response.body()!!
+                false -> throw ApiException("Server not responding")
             }
         }
     }

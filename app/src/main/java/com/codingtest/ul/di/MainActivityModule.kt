@@ -1,6 +1,6 @@
 package com.codingtest.ul.di
 
-import com.codingtest.ul.ui.MainActivity
+import com.codingtest.ul.ui.MainFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -8,5 +8,5 @@ import dagger.android.ContributesAndroidInjector
 abstract class MainActivityModule {
 
     @ContributesAndroidInjector
-    abstract fun contributeMainActivityInjector(): MainActivity
+    abstract fun contributeMainFragmentInjector(): MainFragment
 }

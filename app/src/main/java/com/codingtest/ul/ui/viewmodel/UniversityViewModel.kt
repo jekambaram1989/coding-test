@@ -4,41 +4,39 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.codingtest.ul.network.response.University
 import com.codingtest.ul.repository.UniversityRepository
+import com.codingtest.ul.util.ApiException
 import com.codingtest.ul.util.NetworkState
-import kotlinx.coroutines.Dispatchers
+import com.codingtest.ul.util.NoInternetException
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class UniversityViewModel @Inject constructor(private val repository: UniversityRepository) :
     ViewModel() {
 
-    private val networkList = MutableLiveData<NetworkState>()
-    private val localList = MutableLiveData<List<University>>()
+    private val universities = MutableLiveData<NetworkState>()
 
-    fun getUniversityListNetwork(): LiveData<NetworkState> {
+
+    fun getUniversities(): LiveData<NetworkState> {
         viewModelScope.launch {
-            try {
-                networkList.postValue(repository.getUniversityListNetwork())
-            } catch (e: Exception) {
-                networkList.postValue(NetworkState.error("Network error"))
+            val localList = repository.getLocalUniversities()
+            if (localList.isEmpty()) {
+                try {
+                    val networkList = repository.getNetworkUniversities()
+                    repository.deleteAll()
+                    repository.insertUniversities(networkList)
+                    universities.postValue(NetworkState.success(networkList))
+                } catch (e: ApiException) {
+                    universities.postValue(NetworkState.error("Server error"))
+                } catch (e: NoInternetException) {
+                    universities.postValue(NetworkState.error("Network error"))
+                } catch (e: Exception) {
+                    universities.postValue(NetworkState.error("Unknown error"))
+                }
+            } else {
+                universities.postValue(NetworkState.success(localList))
             }
         }
-        return networkList
-    }
-
-    fun getListFromDatabase(): LiveData<List<University>> {
-        viewModelScope.launch(Dispatchers.IO) {
-            localList.postValue(repository.getUniversities())
-        }
-        return localList
-    }
-
-    fun setListToDatabase(universityList: List<University>) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.deleteAll()
-            repository.insertUniversities(universityList)
-        }
+        return universities
     }
 }

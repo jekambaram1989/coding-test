@@ -34,5 +34,4 @@ class NetworkConnectionInterceptor @Inject constructor(context: Context) : Inter
         }
         return result
     }
-
 }
